@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>{{ prof }}</h2>
+    {% if prof == "Инженерные тренажеры" %}
+        <div><img src="https://lh3.googleusercontent.com/proxy/8UIDgPq-yP2iX6UstLuUTbC6hfH9HBHPMD8jTbAbXsEZOqlbK_iBRNUhaKpCHNgsof6hjiby7P_zOFFlNY3zr-a5JWQ"></div>
+ {% else %}
+ <div><img src="https://lh3.googleusercontent.com/proxy/S9JWFjg269lg5zKH0kQR0Wb8HE0VGOR2kR1jluh4niKxqef5gN3-dbMo2bIzxGNJO9N4B_EKgI2kdr17SPNhLZQ"></div>
+ {% endif %}
+{% endblock %}

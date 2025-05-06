@@ -1,0 +1,21 @@
+h4{
+    color: rgb(129, 129, 129);
+    margin-left: 20px;
+}
+
+.emergency-access {
+    padding-left: 50px;
+    position: relative;
+}
+
+.emergency-access::before {
+    content: "";
+    background: url('/static/images/mars.png') no-repeat;
+    background-size: 90px;
+    width: 90px;
+    height: 90px;
+    position: absolute;
+    left: -50px;
+    top: 70%;
+    transform: translateY(-20%);
+}
