@@ -19,3 +19,14 @@ h4{
     top: 70%;
     transform: translateY(-20%);
 }
+.center {
+  text-align: center;
+}
+
+.right {
+  text-align: right;
+}
+
+.justify {
+  text-align: justify;
+}

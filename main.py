@@ -1,73 +1,109 @@
-from flask import Flask, render_template
-from datetime import datetime
+from flask import Flask, render_template, redirect
 from data import db_session
-from data.users import User
 from data.jobs import Jobs
-from loginform import LoginForm
-from config_key import secret_key # файл в .gitignore
+from data.users import User  # Import User model
+from forms.loginform import LoginForm
+from config_key import secret_key  # файл в .gitignore
+from forms.user import RegisterForm
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = secret_key # можно указать любой
+app.config['SECRET_KEY'] = secret_key  # можно указать любой
+
+db_session.global_init("db/mars_explorer.db")
+db_sess = db_session.create_session()
 
 @app.route('/')
 @app.route('/index')
 @app.route('/<title>')
 @app.route('/index/<title>')
 def index(title='Домашняя страница'):
-    return render_template('base.html', title=title)
+    global db_sess
+    a = []
+    for job in db_sess.query(Jobs).all():
+        a.append(job)
+    return render_template('works_log.html', title=title, lst=a)
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def reqister():
-    pass
+    global db_sess
+    form = RegisterForm()
+    if form.validate_on_submit():
+        if form.password.data != form.password_again.data:
+            return render_template('register.html', title='Регистрация',
+                                   form=form,
+                                   message="Пароли не совпадают")
+        db_sess = db_session.create_session()
+        if db_sess.query(User).filter(User.email == form.email.data).first():
+            return render_template('register.html', title='Регистрация',
+                                   form=form,
+                                   message="Такой пользователь уже есть")
+        user = User(
+            surname=form.surname.data,
+            email=form.email.data,
+            name=form.name.data,
+            age=form.age.data,
+            position=form.position.data,
+            speciality=form.speciality.data,
+            address=form.address.data
+        )
+        user.set_password(form.password.data)
+        db_sess.add(user)
+        db_sess.commit()
+        return redirect('/login')
+    return render_template('register.html', title='Регистрация', form=form)
+
 
 @app.route('/training/<prof>')
 def training(prof=''):
     spec = "Научные симуляторы"
     if "инженер" in prof.lower() or "строитель" in prof.lower():
         spec = "Инженерные тренажеры"
-
     return render_template('prof.html', prof=spec)
+
 
 @app.route('/list_prof/<numeration>')
 def list_prof(numeration=''):
     lst = ['Инженер-исследователь',
-            'Инженер-строитель',
-            'Пилот',
-            'Метеоролог',
-            'Инженер по жизнеобеспечению',
-            'Инженер по радиационной защите',
-            'Врач',
-            'Экзобиолог']
+           'Инженер-строитель',
+           'Пилот',
+           'Метеоролог',
+           'Инженер по жизнеобеспечению',
+           'Инженер по радиационной защите',
+           'Врач',
+           'Экзобиолог']
     return render_template('list.html', list=lst, format=numeration)
+
 
 @app.route('/answer')
 @app.route('/auto_answer')
 def answer():
-    dict1 = {"Фамилия":"Иванов",
-              "Имя": "Иван",
-                "Образование":"высшее",
-                  "Профессия":"штурман",
-                    "Пол":"male", "Мотивация":"Всегда мечтал застрять на Марсе",
-                      "Готовы остаться":True}
+    dict1 = {"Фамилия": "Иванов",
+             "Имя": "Иван",
+             "Образование": "высшее",
+             "Профессия": "штурман",
+             "Пол": "male",
+             "Мотивация": "Всегда мечтал застрять на Марсе",
+             "Готовы остаться": True}
     return render_template('auto_answer.html', dictt=dict1)
 
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        return redirect('/success')
-    return render_template('login.html', title='Авторизация', form=form)
+# @app.route('/login', methods=['GET', 'POST'])
+# def login():
+#     form = LoginForm()
+#     if form.validate_on_submit():
+#         return redirect('/success')
+#     return render_template('login.html', title='Авторизация', form=form)
+
 
 @app.route('/success')
 def success():
     return render_template('success.html')
 
+
 def main():
     # db_session.global_init("db/mars_explorer.db")
     # db_sess = db_session.create_session()
-
     # user = User()
     # user.surname = "Scott"
     # user.name = "Ridley"
@@ -77,7 +113,7 @@ def main():
     # user.address = "module_1"
     # user.email = "scott_chief@mars.org"
     # db_sess.add(user)
-
+    #
     # user1 = User()
     # user1.surname = "Ivan"
     # user1.name = "Ivanov"
@@ -87,7 +123,7 @@ def main():
     # user1.address = "module_2"
     # user1.email = "ivanov@mars.org"
     # db_sess.add(user1)
-
+    #
     # user2 = User()
     # user2.surname = "Petr"
     # user2.name = "Petrov"
@@ -97,7 +133,7 @@ def main():
     # user2.address = "module_2"
     # user2.email = "petrov@mars.org"
     # db_sess.add(user2)
-
+    #
     # user3 = User()
     # user3.surname = "Pavel"
     # user3.name = "Pavlov"
@@ -107,19 +143,20 @@ def main():
     # user3.address = "module_3"
     # user3.email = "pavlov@mars.org"
     # db_sess.add(user3)
-
+    #
     # job = Jobs()
-    # job.team_leader = 1
-    # job.job = "deployment of residential modules 1 and 2"
-    # job.work_size = 15
-    # job.collaborators = "2, 3"
-    
+    # job.team_leader = 2
+    # job.job = "Exploration of mineral resources"
+    # job.work_size = 12
+    # job.collaborators = "1, 3"
+    #
     # db_sess.add(job)
-
+    #
     # db_sess.commit()
     # db_sess.close()
 
     app.run()
+
 
 if __name__ == '__main__':
     main()
