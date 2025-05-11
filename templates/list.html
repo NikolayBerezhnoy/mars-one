@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
-    <h2>Список профессий</h2>
-    {% if format == "ul" %}
-        <ul>
-            {% for i in list %}
-                <li>{{ i }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <ol>
-            {% for i in list %}
-                <li>{{ i }}</li>
-            {% endfor %}
-        </ol>
-    {% endif %}
-    
+<h2>Список профессий</h2>
+{% if format == "ul" %}
+<ul>
+    {% for i in list %}
+    <li>{{ i }}</li>
+    {% endfor %}
+</ul>
+{% else %}
+<ol>
+    {% for i in list %}
+    <li>{{ i }}</li>
+    {% endfor %}
+</ol>
+{% endif %}
+
 {% endblock %}

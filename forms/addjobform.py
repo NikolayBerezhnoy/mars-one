@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, EmailField, IntegerField, DateField
-from wtforms.validators import DataRequired, NumberRange
+from wtforms import StringField, BooleanField, SubmitField, IntegerField, DateField
+from wtforms.validators import DataRequired
 
 
 class AddJobForm(FlaskForm):

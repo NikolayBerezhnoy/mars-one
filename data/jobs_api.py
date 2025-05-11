@@ -1,5 +1,6 @@
 import flask
 from flask import jsonify, make_response, request
+
 from . import db_session
 from .jobs import Jobs
 
@@ -8,6 +9,7 @@ blueprint = flask.Blueprint(
     __name__,
     template_folder='templates'
 )
+
 
 @blueprint.route('/api/jobs')
 def get_jobs():
@@ -21,6 +23,7 @@ def get_jobs():
         }
     )
 
+
 @blueprint.route('/api/jobs/<int:jobs_id>', methods=['GET'])
 def get_one_news(jobs_id):
     db_sess = db_session.create_session()
@@ -32,6 +35,7 @@ def get_one_news(jobs_id):
             'jobs': jobs.to_dict(only=('team_leader'))
         }
     )
+
 
 @blueprint.route('/api/jobs', methods=['POST'])
 def create_jobs():
